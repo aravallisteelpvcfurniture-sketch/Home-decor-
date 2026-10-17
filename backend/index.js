@@ -112,6 +112,45 @@ exports.generateAiContent = functions.https.onRequest(async (req, res) => {
     "You specialize in Stainless Steel Railing (SS 304/202), PVC Modular Kitchens, UPVC Windows, Aluminium Glass Balconies, and Modern Wardrobes. " +
     "Respond respectfully, professionally, and clearly. Default to the requested language (" + (language || "Hindi") + "), providing practical, high-value, ready-to-share business content.";
 
+  // Use official Google GenAI SDK (@google/genai) if available
+  let GoogleGenAI;
+  try {
+    const genaiPkg = require("@google/genai");
+    GoogleGenAI = genaiPkg.GoogleGenAI;
+  } catch (_) {
+    GoogleGenAI = null;
+  }
+
+  if (GoogleGenAI) {
+    try {
+      const ai = new GoogleGenAI({ apiKey: apiKey });
+      const response = await ai.models.generateContent({
+        model: model,
+        contents: prompt,
+        config: {
+          systemInstruction: systemInstruction,
+          temperature: 0.7,
+          topP: 0.95
+        }
+      });
+      const generatedText = response.text || "कोई प्रतिक्रिया प्राप्त नहीं हुई।";
+      res.status(200).json({
+        success: true,
+        model: model,
+        text: generatedText,
+        toolType: toolType || "general",
+        sdk: "@google/genai"
+      });
+      return;
+    } catch (sdkErr) {
+      res.status(500).json({
+        success: false,
+        error: `जेमिनी SDK त्रुटि: ${sdkErr.message || "अनपेक्षित त्रुटि"}`
+      });
+      return;
+    }
+  }
+
   const requestBody = JSON.stringify({
     systemInstruction: {
       parts: [{ text: systemInstruction }]
