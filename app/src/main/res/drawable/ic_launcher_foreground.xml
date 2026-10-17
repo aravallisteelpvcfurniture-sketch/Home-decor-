@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Drop shadow -->
+    <path
+        android:fillColor="#33000000"
+        android:pathData="M54,23 L79,75 L67,75 L62,64 L46,64 L41,75 L29,75 Z" />
+
+    <!-- A-frame architectural steel structure (Primary Gold / Steel) -->
+    <path
+        android:pathData="M54,22 L78,74 L66,74 L61,63 L47,63 L42,74 L30,74 Z M54,36 L49,56 L59,56 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="30"
+                android:startY="22"
+                android:endX="78"
+                android:endY="74"
+                android:type="linear">
+                <item android:offset="0.0" android:color="#FFE082" />
+                <item android:offset="0.5" android:color="#FFB300" />
+                <item android:offset="1.0" android:color="#FFA000" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Stainless steel crossbars & interior furniture lines -->
+    <path
+        android:fillColor="#E0E6ED"
+        android:pathData="M38,59 L70,59 L70,62 L38,62 Z" />
+
+    <!-- Modern furniture base outline -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M34,77 L74,77 L74,80 L34,80 Z M38,80 L40,84 L43,84 L41,80 Z M67,80 L65,84 L68,84 L70,80 Z" />
+
+    <!-- Diamond polish crest accent -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,28 L56,31 L54,34 L52,31 Z" />
+</vector>

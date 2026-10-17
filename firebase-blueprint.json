@@ -1,0 +1,223 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile with role and business details",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "phone": { "type": "string" },
+        "role": { "type": "string", "enum": ["admin", "staff", "carpenter", "customer"] },
+        "businessName": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "name", "role"]
+    },
+    "Customer": {
+      "title": "Customer",
+      "description": "Customer lead and visit information",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "name": { "type": "string" },
+        "phone": { "type": "string" },
+        "whatsapp": { "type": "string" },
+        "address": { "type": "string" },
+        "villageOrCity": { "type": "string" },
+        "projectType": { "type": "string" },
+        "budget": { "type": "number" },
+        "status": { "type": "string" },
+        "notes": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "name", "phone"]
+    },
+    "Product": {
+      "title": "Product",
+      "description": "Product catalog and inventory item",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "name": { "type": "string" },
+        "sku": { "type": "string" },
+        "category": { "type": "string" },
+        "description": { "type": "string" },
+        "material": { "type": "string" },
+        "dimensions": { "type": "string" },
+        "unit": { "type": "string" },
+        "sellingPrice": { "type": "number" },
+        "costPrice": { "type": "number" },
+        "stockQuantity": { "type": "number" },
+        "imageUrl": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "name", "category", "sellingPrice"]
+    },
+    "Estimate": {
+      "title": "Estimate",
+      "description": "Measurement quote and calculation breakdown",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "estimateNumber": { "type": "string" },
+        "customerId": { "type": "string" },
+        "customerName": { "type": "string" },
+        "customerPhone": { "type": "string" },
+        "projectType": { "type": "string" },
+        "itemsJson": { "type": "string" },
+        "subtotal": { "type": "number" },
+        "gstPercent": { "type": "number" },
+        "gstAmount": { "type": "number" },
+        "discount": { "type": "number" },
+        "finalTotal": { "type": "number" },
+        "advance": { "type": "number" },
+        "balance": { "type": "number" },
+        "notes": { "type": "string" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "estimateNumber", "customerName", "finalTotal"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "Customer order and production milestone",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "orderNumber": { "type": "string" },
+        "customerId": { "type": "string" },
+        "customerName": { "type": "string" },
+        "customerPhone": { "type": "string" },
+        "projectType": { "type": "string" },
+        "estimateId": { "type": "string" },
+        "totalAmount": { "type": "number" },
+        "advancePaid": { "type": "number" },
+        "balanceAmount": { "type": "number" },
+        "deliveryDate": { "type": "string" },
+        "assignedWorker": { "type": "string" },
+        "status": { "type": "string" },
+        "notes": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "orderNumber", "customerName", "totalAmount"]
+    },
+    "Worker": {
+      "title": "Worker",
+      "description": "Carpenter, fabricator, or installer worker profile",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "name": { "type": "string" },
+        "phone": { "type": "string" },
+        "role": { "type": "string" },
+        "dailyWage": { "type": "number" },
+        "status": { "type": "string" },
+        "notes": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "name", "role", "dailyWage"]
+    },
+    "Attendance": {
+      "title": "Attendance",
+      "description": "Daily worker attendance and wage register",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "workerId": { "type": "string" },
+        "workerName": { "type": "string" },
+        "date": { "type": "string" },
+        "status": { "type": "string" },
+        "overtimeHours": { "type": "number" },
+        "advanceGiven": { "type": "number" },
+        "dailyEarned": { "type": "number" },
+        "notes": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "workerId", "date", "status"]
+    },
+    "Transaction": {
+      "title": "Transaction",
+      "description": "Cashbook income or expense entry",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "type": { "type": "string", "enum": ["Income", "Expense"] },
+        "category": { "type": "string" },
+        "amount": { "type": "number" },
+        "paymentMode": { "type": "string" },
+        "reference": { "type": "string" },
+        "date": { "type": "string" },
+        "notes": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "type", "category", "amount", "date"]
+    },
+    "Settings": {
+      "title": "Settings",
+      "description": "Business settings and configuration",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "businessName": { "type": "string" },
+        "phone": { "type": "string" },
+        "whatsapp": { "type": "string" },
+        "email": { "type": "string" },
+        "address": { "type": "string" },
+        "gstin": { "type": "string" },
+        "defaultGstRate": { "type": "number" },
+        "estimateTerms": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "businessName"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "User profile collection"
+    },
+    "/users/{userId}/customers/{customerId}": {
+      "schema": { "$ref": "#/entities/Customer" },
+      "description": "Customer leads collection"
+    },
+    "/users/{userId}/products/{productId}": {
+      "schema": { "$ref": "#/entities/Product" },
+      "description": "Product catalog and inventory"
+    },
+    "/users/{userId}/estimates/{estimateId}": {
+      "schema": { "$ref": "#/entities/Estimate" },
+      "description": "Measurement quotes and estimates"
+    },
+    "/users/{userId}/orders/{orderId}": {
+      "schema": { "$ref": "#/entities/Order" },
+      "description": "Production and installation orders"
+    },
+    "/users/{userId}/workers/{workerId}": {
+      "schema": { "$ref": "#/entities/Worker" },
+      "description": "Workers and carpenters register"
+    },
+    "/users/{userId}/attendance/{attendanceId}": {
+      "schema": { "$ref": "#/entities/Attendance" },
+      "description": "Worker attendance records"
+    },
+    "/users/{userId}/transactions/{transactionId}": {
+      "schema": { "$ref": "#/entities/Transaction" },
+      "description": "Daily cashbook and financial entries"
+    },
+    "/users/{userId}/settings/{settingId}": {
+      "schema": { "$ref": "#/entities/Settings" },
+      "description": "Business settings"
+    }
+  }
+}

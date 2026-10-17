@@ -1,0 +1,6 @@
+{
+  "name": "Aravalli Steel PVC Furniture",
+  "description": "Comprehensive business management application for Aravalli Steel PVC Furniture & Interior in Modasa, Gujarat: customer leads, measurements, calculators, quotes/estimates, orders, worker attendance, wages, inventory, accounting and catalogue.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

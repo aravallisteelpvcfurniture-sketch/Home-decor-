@@ -1,0 +1,131 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isValidTimestamp(val) {
+      return val is timestamp;
+    }
+
+    function isValidUserProfile(data, userId) {
+      return data.userId == userId &&
+        data.name is string && data.name.size() > 0 &&
+        data.role in ['admin', 'staff', 'carpenter', 'customer'];
+    }
+
+    function isValidCustomer(data, userId) {
+      return data.userId == userId &&
+        data.name is string && data.name.size() > 0 &&
+        data.phone is string && data.phone.size() > 0;
+    }
+
+    function isValidProduct(data, userId) {
+      return data.userId == userId &&
+        data.name is string && data.name.size() > 0 &&
+        data.category is string &&
+        data.sellingPrice is number && data.sellingPrice >= 0;
+    }
+
+    function isValidEstimate(data, userId) {
+      return data.userId == userId &&
+        data.estimateNumber is string &&
+        data.customerName is string &&
+        data.finalTotal is number;
+    }
+
+    function isValidOrder(data, userId) {
+      return data.userId == userId &&
+        data.orderNumber is string &&
+        data.customerName is string &&
+        data.totalAmount is number;
+    }
+
+    function isValidWorker(data, userId) {
+      return data.userId == userId &&
+        data.name is string && data.name.size() > 0 &&
+        data.role is string &&
+        data.dailyWage is number && data.dailyWage >= 0;
+    }
+
+    function isValidAttendance(data, userId) {
+      return data.userId == userId &&
+        data.workerId is string &&
+        data.date is string &&
+        data.status is string;
+    }
+
+    function isValidTransaction(data, userId) {
+      return data.userId == userId &&
+        data.type in ['Income', 'Expense'] &&
+        data.category is string &&
+        data.amount is number &&
+        data.date is string;
+    }
+
+    function isValidSettings(data, userId) {
+      return data.userId == userId &&
+        data.businessName is string && data.businessName.size() > 0;
+    }
+
+    match /users/{userId} {
+      allow read: if isOwner(userId);
+      allow create, update: if isOwner(userId) && isValidUserProfile(request.resource.data, userId);
+      allow delete: if isOwner(userId);
+
+      match /customers/{customerId} {
+        allow read: if isOwner(userId);
+        allow create, update: if isOwner(userId) && isValidCustomer(request.resource.data, userId);
+        allow delete: if isOwner(userId);
+      }
+
+      match /products/{productId} {
+        allow read: if isOwner(userId);
+        allow create, update: if isOwner(userId) && isValidProduct(request.resource.data, userId);
+        allow delete: if isOwner(userId);
+      }
+
+      match /estimates/{estimateId} {
+        allow read: if isOwner(userId);
+        allow create, update: if isOwner(userId) && isValidEstimate(request.resource.data, userId);
+        allow delete: if isOwner(userId);
+      }
+
+      match /orders/{orderId} {
+        allow read: if isOwner(userId);
+        allow create, update: if isOwner(userId) && isValidOrder(request.resource.data, userId);
+        allow delete: if isOwner(userId);
+      }
+
+      match /workers/{workerId} {
+        allow read: if isOwner(userId);
+        allow create, update: if isOwner(userId) && isValidWorker(request.resource.data, userId);
+        allow delete: if isOwner(userId);
+      }
+
+      match /attendance/{attendanceId} {
+        allow read: if isOwner(userId);
+        allow create, update: if isOwner(userId) && isValidAttendance(request.resource.data, userId);
+        allow delete: if isOwner(userId);
+      }
+
+      match /transactions/{transactionId} {
+        allow read: if isOwner(userId);
+        allow create, update: if isOwner(userId) && isValidTransaction(request.resource.data, userId);
+        allow delete: if isOwner(userId);
+      }
+
+      match /settings/{settingId} {
+        allow read: if isOwner(userId);
+        allow create, update: if isOwner(userId) && isValidSettings(request.resource.data, userId);
+        allow delete: if isOwner(userId);
+      }
+    }
+  }
+}

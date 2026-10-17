@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">Aravalli</string>
+    <string name="business_full_name">ARAVALLI STEEL PVC FURNITURE</string>
+    <string name="business_address">Shyam Arcade, 14, Meghraj Road, near Bharwad Hostel, Modasa, Gujarat 383315</string>
+    <string name="business_phone">+91 98250 12345</string>
+    <string name="business_whatsapp">+91 98250 12345</string>
+    <string name="business_email">aravallisteelpvc@gmail.com</string>
+    <string name="business_gstin">24AABCA1234F1Z5</string>
+
+    <!-- Navigation -->
+    <string name="nav_home">होम</string>
+    <string name="nav_products">उत्पाद</string>
+    <string name="nav_tools">टूल्स</string>
+    <string name="nav_orders">ऑर्डर</string>
+    <string name="nav_more">मेनू</string>
+
+    <string name="sign_in_title">Aravalli Steel PVC Furniture</string>
+    <string name="sign_in_subtitle">मोडासा, गुजरात - बिज़नेस मैनेजमेंट सिस्टम</string>
+    <string name="sign_in_with_google">Sign in with Google</string>
+</resources>
