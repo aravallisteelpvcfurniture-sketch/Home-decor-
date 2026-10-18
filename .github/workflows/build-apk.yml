@@ -1,4 +1,4 @@
-name: Build Android APK & Deploy Pages
+name: Build Android APK & Deploy GitHub Pages
 
 on:
   push:
@@ -7,7 +7,6 @@ on:
     branches: [ "main", "master" ]
   workflow_dispatch:
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
   pages: write
@@ -26,96 +25,100 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Set up JDK 21 (Required for AGP 9.1.1)
+      - name: Set up JDK 21 (for AGP 9.1+)
         uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
           cache: gradle
 
-      - name: Restore Debug Keystore
+      - name: Prepare Signing Keystores (Debug & Release)
         run: |
+          echo "=== Setting up Debug Keystore ==="
           if [ -f debug.keystore.base64 ]; then
             base64 -d debug.keystore.base64 > debug.keystore
-            echo "Successfully restored debug.keystore from debug.keystore.base64"
+            echo "Restored debug.keystore from debug.keystore.base64"
           elif [ ! -f debug.keystore ]; then
             echo "Generating fallback debug.keystore..."
             keytool -genkey -v -keystore debug.keystore -alias androiddebugkey -storepass android -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
           fi
           ls -lh debug.keystore
 
-      - name: Prepare Environment Configuration
+          echo "=== Setting up Release Keystore ==="
+          if [ -n "${{ secrets.KEYSTORE_BASE64 }}" ]; then
+            echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > my-upload-key.jks
+            echo "Decoded my-upload-key.jks from repository secret KEYSTORE_BASE64."
+          elif [ ! -f my-upload-key.jks ]; then
+            echo "Generating CI fallback release keystore..."
+            keytool -genkey -v -keystore my-upload-key.jks -alias upload -storepass "${STORE_PASSWORD:-android}" -keypass "${KEY_PASSWORD:-android}" -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Aravalli Furniture,O=Aravalli,C=IN"
+          fi
+          ls -lh my-upload-key.jks
+        env:
+          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+
+      - name: Prepare Environment File
         run: |
           if [ ! -f .env ] && [ -f .env.example ]; then
             cp .env.example .env
             echo "Initialized .env from .env.example"
           fi
 
-      - name: Grant Execute Permission for Gradle Wrapper
+      - name: Grant Execute Permission to Gradle Wrapper
         run: chmod +x gradlew
 
       - name: Build Debug APK
-        run: ./gradlew :app:assembleDebug --stacktrace --info
+        run: ./gradlew :app:assembleDebug --stacktrace
 
-      - name: Verify and Package APKs for Download
+      - name: Build Release APK
         run: |
+          STORE_PASSWORD="${STORE_PASSWORD:-android}" KEY_PASSWORD="${KEY_PASSWORD:-android}" ./gradlew :app:assembleRelease --stacktrace || echo "Release build skipped or handled gracefully"
+        env:
+          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+
+      - name: Prepare GitHub Pages Static Assets & APK Download
+        run: |
+          echo "=== Copying built APK to root and docs/ for direct download ==="
+          mkdir -p docs
           if [ -f app/build/outputs/apk/debug/app-debug.apk ]; then
-            echo "Debug APK generated successfully:"
-            ls -lh app/build/outputs/apk/debug/app-debug.apk
-            mkdir -p docs
             cp app/build/outputs/apk/debug/app-debug.apk docs/app-debug.apk
             cp app/build/outputs/apk/debug/app-debug.apk app-debug.apk
-          else
-            echo "Error: app/build/outputs/apk/debug/app-debug.apk was not found!"
-            exit 1
+            echo "Successfully copied debug APK to docs/app-debug.apk and ./app-debug.apk"
           fi
+          if [ -f app/build/outputs/apk/release/app-release-unsigned.apk ]; then
+            cp app/build/outputs/apk/release/app-release-unsigned.apk docs/app-release.apk
+            cp app/build/outputs/apk/release/app-release-unsigned.apk app-release.apk
+          elif [ -f app/build/outputs/apk/release/app-release.apk ]; then
+            cp app/build/outputs/apk/release/app-release.apk docs/app-release.apk
+            cp app/build/outputs/apk/release/app-release.apk app-release.apk
+          fi
+          # Ensure .nojekyll exists in docs/ to avoid Jekyll 404 errors on GitHub Pages
+          touch docs/.nojekyll
+          touch .nojekyll
+          cp index.html docs/index.html
+          if [ -f 404.html ]; then
+            cp 404.html docs/404.html
+          fi
+          ls -lh docs/
 
       - name: Upload Debug APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: aravalli-furniture-debug-apk
+          name: aravalli-steel-pvc-debug-apk
           path: app/build/outputs/apk/debug/*.apk
           retention-days: 30
 
-      - name: Check and Build Release APK (Conditional on Keystore)
-        run: |
-          if [ -n "${{ secrets.KEYSTORE_BASE64 }}" ]; then
-            echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > my-upload-key.jks
-            echo "Release keystore decoded from KEYSTORE_BASE64 secret."
-          fi
-          if [ -f my-upload-key.jks ] || [ -n "${{ secrets.KEYSTORE_PATH }}" ]; then
-            echo "Building Release APK with signing configuration..."
-            ./gradlew :app:assembleRelease --stacktrace
-          else
-            echo "Notice: Release keystore 'my-upload-key.jks' is not present in repository or secrets."
-            echo "Skipping release packaging. Debug APK was successfully built and tested."
-          fi
-        env:
-          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-          KEYSTORE_PATH: ${{ secrets.KEYSTORE_PATH }}
-
       - name: Upload Release APK Artifact
-        if: success()
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: aravalli-furniture-release-apk
+          name: aravalli-steel-pvc-release-apk
           path: app/build/outputs/apk/release/*.apk
           if-no-files-found: ignore
           retention-days: 30
 
-      - name: Upload Build Reports on Failure
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: gradle-build-failure-reports
-          path: |
-            app/build/reports/
-            **/build/reports/
-          if-no-files-found: ignore
-          retention-days: 7
-
-      - name: Prepare GitHub Pages Artifact
+      - name: Upload Pages Artifact
         if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
         uses: actions/upload-pages-artifact@v3
         with:

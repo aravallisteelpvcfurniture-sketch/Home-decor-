@@ -43,6 +43,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -61,6 +62,7 @@ fun SettingsScreen(
     viewModel: AravalliViewModel,
     onSignOutClicked: () -> Unit
 ) {
+    val context = LocalContext.current
     val settings by viewModel.settings.collectAsState()
     val currentLang by viewModel.currentLanguage.collectAsState()
     val isHi = currentLang == "hi"
@@ -252,6 +254,44 @@ fun SettingsScreen(
             }
         }
 
+        // Showroom Contact & WhatsApp Support
+        item {
+            Card(
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(
+                        text = "📍 अरावल्ली शोरूम व संपर्क (Modasa Showroom)",
+                        fontWeight = FontWeight.Bold,
+                        color = NavyPrimary,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Text(
+                        text = "श्याम आर्केड, १४, मेघराज रोड, भरवाड़ हॉस्टल के पास, मोडासा, गुजरात ३८३३१५\nफोन: +91 98250 12345 | ईमेल: aravallisteelpvc@gmail.com",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color(0xFF475569)
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Button(
+                        onClick = {
+                            com.example.ui.components.openWhatsApp(
+                                context = context,
+                                phone = "+919825012345",
+                                message = "नमस्ते अरावल्ली टीम! मुझे बिजनेस इन्क्वायरी के लिए संपर्क करना है।"
+                            )
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0F5132)),
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Text("💬 व्हाट्सएप पर संपर्क करें (Open WhatsApp)", fontWeight = FontWeight.Bold)
+                    }
+                }
+            }
+        }
+
         // APK Build & GitHub Actions Guide
         item {
             Card(
@@ -266,7 +306,7 @@ fun SettingsScreen(
                     }
                     Spacer(modifier = Modifier.height(6.dp))
                     Text(
-                        text = "फोन में इंस्टॉल करने के लिए APK फ़ाइल प्राप्त करने के 2 आसान तरीके:\n1. Settings मेनू में जाकर 'Export as ZIP' करें या GitHub पर पुश करें।\n2. GitHub Actions वर्कफ़्लो 'gradle assembleRelease' चलाकर स्वचालित रूप से Actions > Artifacts से APK डाउनलोड कर सकते हैं।",
+                        text = "फोन में इंस्टॉल करने के लिए APK फ़ाइल प्राप्त करने के 2 आसान तरीके:\n1. Settings मेनू में जाकर 'Export as ZIP' करें या GitHub पर कोड पुश करें।\n2. GitHub Actions वर्कफ़्लो 'Build Android APK & Deploy GitHub Pages' स्वचालित रूप से Actions > Artifacts से Debug व Release APK तैयार करता है।",
                         style = MaterialTheme.typography.bodySmall,
                         color = Color.DarkGray
                     )
