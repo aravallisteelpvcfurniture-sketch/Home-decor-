@@ -35,6 +35,16 @@ class GeminiAiToolsTest {
     @Test
     fun geminiAiService_handlesMissingConfigGracefullyWithoutCrashing() = runTest {
         val context = ApplicationProvider.getApplicationContext<Context>()
+        if (com.google.firebase.FirebaseApp.getApps(context).isEmpty()) {
+            com.google.firebase.FirebaseApp.initializeApp(
+                context,
+                com.google.firebase.FirebaseOptions.Builder()
+                    .setApplicationId("com.example.app")
+                    .setProjectId("demo-test")
+                    .setApiKey("fake-key")
+                    .build()
+            )
+        }
         val service = GeminiAiService(context)
 
         // When no backend or key is set, service must return clean, informative error message

@@ -51,8 +51,11 @@ class GeminiAiService(private val context: Context) {
         selectedLanguage: String = "Hindi",
         businessLocation: String = "Shyam Arcade, Meghraj Road, Modasa, Gujarat 383315"
     ): AiResult = withContext(Dispatchers.IO) {
-        val auth = Firebase.auth
-        val currentUser = auth.currentUser
+        val currentUser = try {
+            Firebase.auth.currentUser
+        } catch (_: Exception) {
+            null
+        }
 
         // Build domain-specific prompt for Aravalli Furniture
         val systemPrompt = buildSystemPrompt(toolType, selectedLanguage, businessLocation)
