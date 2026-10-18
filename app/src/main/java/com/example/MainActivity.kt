@@ -87,6 +87,7 @@ import com.example.ui.screens.OrdersScreen
 import com.example.ui.screens.ProductDetailScreen
 import com.example.ui.screens.ProductsScreen
 import com.example.ui.screens.SettingsScreen
+import com.example.ui.screens.SplashScreen
 import com.example.ui.screens.ToolsScreen
 import com.example.ui.screens.WelcomeOnboardingScreen
 import com.example.ui.theme.GoldAccent
@@ -120,6 +121,7 @@ fun AppRootContent() {
     val credentialManager = remember { CredentialManager.create(context) }
     var currentUser by remember { mutableStateOf(Firebase.auth.currentUser) }
     var isDemoLoggedIn by remember { mutableStateOf(false) }
+    var showSplash by remember { mutableStateOf(true) }
     var showOnboarding by remember { mutableStateOf(false) }
 
     DisposableEffect(Unit) {
@@ -143,6 +145,13 @@ fun AppRootContent() {
     }
 
     when {
+        showSplash -> {
+            SplashScreen(
+                onSplashComplete = {
+                    showSplash = false
+                }
+            )
+        }
         showOnboarding -> {
             WelcomeOnboardingScreen(
                 onGetStarted = { showOnboarding = false },
