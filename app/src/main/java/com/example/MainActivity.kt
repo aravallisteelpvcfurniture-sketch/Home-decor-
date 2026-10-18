@@ -24,6 +24,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.AccountBalanceWallet
+import androidx.compose.material.icons.filled.AdminPanelSettings
 import androidx.compose.material.icons.filled.Assignment
 import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Build
@@ -70,6 +71,7 @@ import androidx.credentials.CredentialManager
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.ui.auth.AuthManager
 import com.example.ui.components.AravalliTopAppBar
+import com.example.ui.screens.AdminPanelScreen
 import com.example.ui.screens.AiToolsScreen
 import com.example.ui.screens.AttendanceScreen
 import com.example.ui.screens.AuthScreen
@@ -177,6 +179,7 @@ fun MainDashboardScaffold(onSignOut: () -> Unit) {
 
     val screenTitle = when (currentScreen) {
         "home" -> "ARAVALLI STEEL PVC"
+        "admin" -> "व्यवस्थापक पैनल (Admin Panel)"
         "products" -> "उत्पाद एवं स्टॉक (Products)"
         "tools" -> "माप कैलकुलेटर (Calculators)"
         "orders" -> "ऑर्डर और प्रोजेक्ट (Orders)"
@@ -200,7 +203,8 @@ fun MainDashboardScaffold(onSignOut: () -> Unit) {
                 onToggleLang = {
                     val nextLang = if (currentLang == "hi") "en" else "hi"
                     viewModel.setLanguage(nextLang)
-                }
+                },
+                onAdminClick = { currentScreen = "admin" }
             )
         },
         bottomBar = {
@@ -238,7 +242,7 @@ fun MainDashboardScaffold(onSignOut: () -> Unit) {
                     colors = navItemColors()
                 )
                 NavigationBarItem(
-                    selected = currentScreen in listOf("more", "estimates", "customers", "attendance", "finance", "catalogue", "settings", "ai_tools"),
+                    selected = currentScreen in listOf("more", "admin", "estimates", "customers", "attendance", "finance", "catalogue", "settings", "ai_tools"),
                     onClick = { currentScreen = "more" },
                     icon = { Icon(Icons.Default.Menu, contentDescription = "Menu") },
                     label = { Text(if (isHi) "मेनू" else "Menu", fontSize = 11.sp) },
@@ -262,7 +266,12 @@ fun MainDashboardScaffold(onSignOut: () -> Unit) {
                     onNavigateToTools = { currentScreen = "tools" },
                     onNavigateToProducts = { currentScreen = "products" },
                     onNavigateToCatalogue = { currentScreen = "catalogue" },
-                    onNavigateToAiTools = { currentScreen = "ai_tools" }
+                    onNavigateToAiTools = { currentScreen = "ai_tools" },
+                    onNavigateToAdmin = { currentScreen = "admin" }
+                )
+                "admin" -> AdminPanelScreen(
+                    viewModel = viewModel,
+                    onNavigateBack = { currentScreen = "home" }
                 )
                 "products" -> ProductsScreen(viewModel = viewModel)
                 "tools" -> ToolsScreen(
@@ -317,6 +326,15 @@ fun MoreMenuScreen(
                 fontWeight = FontWeight.Bold,
                 color = NavyPrimary,
                 modifier = Modifier.padding(bottom = 6.dp)
+            )
+        }
+
+        item {
+            MenuItemCard(
+                title = "🛡️ अरावल्ली एडमिन कंट्रोल सेंटर (Admin Panel)",
+                subtitle = "स्टाफ व कारीगर, मास्टर दर सूची, जीएसटी, ऑर्डर अनुमोदन व सिस्टम डेटा नियंत्रण",
+                icon = Icons.Default.AdminPanelSettings,
+                onClick = { onNavigate("admin") }
             )
         }
 

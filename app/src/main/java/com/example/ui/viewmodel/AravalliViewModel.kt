@@ -180,12 +180,57 @@ class AravalliViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
+    fun deleteOrder(orderId: String) {
+        viewModelScope.launch {
+            try {
+                repository.deleteOrder(orderId)
+                _statusMessage.value = "ऑर्डर हटाया गया (Order Deleted)"
+            } catch (e: Exception) {
+                _statusMessage.value = "त्रुटि: ${e.message}"
+            }
+        }
+    }
+
     // Worker operations
     fun addOrUpdateWorker(worker: Worker, onDone: () -> Unit = {}) {
         viewModelScope.launch {
             try {
                 repository.saveWorker(worker)
                 _statusMessage.value = "कारीगर प्रोफ़ाइल सुरक्षित की गई"
+                onDone()
+            } catch (e: Exception) {
+                _statusMessage.value = "त्रुटि: ${e.message}"
+            }
+        }
+    }
+
+    fun deleteWorker(workerId: String) {
+        viewModelScope.launch {
+            try {
+                repository.deleteWorker(workerId)
+                _statusMessage.value = "कारीगर हटाया गया (Worker Removed)"
+            } catch (e: Exception) {
+                _statusMessage.value = "त्रुटि: ${e.message}"
+            }
+        }
+    }
+
+    fun updateProductPricing(productId: String, sellingPrice: Double, costPrice: Double, stock: Double) {
+        viewModelScope.launch {
+            try {
+                repository.updateProductPricing(productId, sellingPrice, costPrice, stock)
+                _statusMessage.value = "उत्पाद मूल्य व स्टॉक अपडेट हुआ"
+            } catch (e: Exception) {
+                _statusMessage.value = "त्रुटि: ${e.message}"
+            }
+        }
+    }
+
+    fun reseedDemoData(onDone: () -> Unit = {}) {
+        viewModelScope.launch {
+            try {
+                repository.reseedDemoData()
+                _statusMessage.value = "डेमो डेटा सफलतापूर्वक री-लोड हो गया!"
                 onDone()
             } catch (e: Exception) {
                 _statusMessage.value = "त्रुटि: ${e.message}"
@@ -225,6 +270,18 @@ class AravalliViewModel(application: Application) : AndroidViewModel(application
                 repository.saveSettings(businessSettings)
                 _statusMessage.value = "व्यापार सेटिंग्स अपडेट हो गई"
                 onDone()
+            } catch (e: Exception) {
+                _statusMessage.value = "त्रुटि: ${e.message}"
+            }
+        }
+    }
+
+    fun updateBusinessGst(rate: Double) {
+        viewModelScope.launch {
+            try {
+                val current = settings.value ?: BusinessSettings()
+                repository.saveSettings(current.copy(defaultGstRate = rate))
+                _statusMessage.value = "जीएसटी दर अपडेट: ${rate.toInt()}%"
             } catch (e: Exception) {
                 _statusMessage.value = "त्रुटि: ${e.message}"
             }

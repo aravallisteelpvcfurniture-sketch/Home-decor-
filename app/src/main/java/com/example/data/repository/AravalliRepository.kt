@@ -361,6 +361,28 @@ class AravalliRepository(
         docRef.set(payload).await()
     }
 
+    suspend fun deleteWorker(workerId: String) {
+        val uid = requireUserId()
+        db.collection("users").document(uid).collection("workers").document(workerId).delete().await()
+    }
+
+    suspend fun deleteOrder(orderId: String) {
+        val uid = requireUserId()
+        db.collection("users").document(uid).collection("orders").document(orderId).delete().await()
+    }
+
+    suspend fun updateProductPricing(productId: String, sellingPrice: Double, costPrice: Double, stock: Double) {
+        val uid = requireUserId()
+        db.collection("users").document(uid).collection("products").document(productId).update(
+            mapOf(
+                "sellingPrice" to sellingPrice,
+                "costPrice" to costPrice,
+                "stockQuantity" to stock,
+                "updatedAt" to FieldValue.serverTimestamp()
+            )
+        ).await()
+    }
+
     // --- Attendance ---
     fun observeAttendance(): Flow<List<Attendance>> = callbackFlow {
         val uid = auth.currentUser?.uid
@@ -630,5 +652,138 @@ class AravalliRepository(
         if (!settingsDoc.exists()) {
             saveSettings(BusinessSettings(userId = uid))
         }
+    }
+
+    suspend fun reseedDemoData() {
+        val uid = requireUserId()
+        val initialProducts = listOf(
+            Product(
+                name = "SS 304 Glass Spigot Railing",
+                sku = "ASPF-SS-001",
+                category = "Steel Railing",
+                description = "Grade 304 stainless steel with heavy duty bottom spigots, 12mm toughened glass, slotted top handrail. Ideal for balconies and luxury staircases.",
+                material = "SS 304 & 12mm Glass",
+                dimensions = "36 to 42 inch height",
+                unit = "Rft",
+                sellingPrice = 1850.0,
+                costPrice = 1400.0,
+                stockQuantity = 250.0
+            ),
+            Product(
+                name = "SS 202 Pipe Baluster Staircase Railing",
+                sku = "ASPF-SS-002",
+                category = "Steel Railing",
+                description = "Durable 50mm round top pipe with 3 horizontal safety pipes and designer master pillars.",
+                material = "SS 202 Polished",
+                dimensions = "36 inch height",
+                unit = "Rft",
+                sellingPrice = 850.0,
+                costPrice = 620.0,
+                stockQuantity = 400.0
+            ),
+            Product(
+                name = "Waterproof PVC Modular Kitchen (L-Shape)",
+                sku = "ASPF-KIT-001",
+                category = "Modular Kitchen",
+                description = "100% termite-proof & waterproof 18mm PVC foam carcass, soft-close hydraulic hinges, acrylic high-gloss shutters, SS 304 wire baskets.",
+                material = "18mm Waterproof PVC",
+                dimensions = "Standard 8x10 ft custom fit",
+                unit = "Rft",
+                sellingPrice = 2400.0,
+                costPrice = 1800.0,
+                stockQuantity = 50.0
+            ),
+            Product(
+                name = "3-Door Sliding PVC Wardrobe",
+                sku = "ASPF-WDR-001",
+                category = "Wardrobe",
+                description = "Modern sliding door wardrobe with internal drawers, locker, hanger rod and mirror shutter finish.",
+                material = "PVC Board + Aluminium Profile",
+                dimensions = "7 ft H x 6 ft W x 2 ft D",
+                unit = "Sq Ft",
+                sellingPrice = 1100.0,
+                costPrice = 820.0,
+                stockQuantity = 30.0
+            ),
+            Product(
+                name = "Aluminium Toughened Glass Balcony",
+                sku = "ASPF-BAL-001",
+                category = "Aluminium Glass",
+                description = "Heavy anodized aluminium profile with 10mm toughened safety glass, spider fittings and silicone weather seal.",
+                material = "Aluminium Domal + Glass",
+                dimensions = "Customized per site",
+                unit = "Sq Ft",
+                sellingPrice = 450.0,
+                costPrice = 330.0,
+                stockQuantity = 600.0
+            ),
+            Product(
+                name = "UPVC Sliding Window 3-Track with Mesh",
+                sku = "ASPF-WIN-001",
+                category = "UPVC Doors Windows",
+                description = "Multi-chamber UPVC window with sound & heat insulation, SS mosquito mesh, multi-point lock.",
+                material = "Reinforced UPVC Profile",
+                dimensions = "5 ft W x 4 ft H",
+                unit = "Sq Ft",
+                sellingPrice = 380.0,
+                costPrice = 270.0,
+                stockQuantity = 120.0
+            ),
+            Product(
+                name = "Floating TV Unit with Louver Wall Panelling",
+                sku = "ASPF-TV-001",
+                category = "TV Unit",
+                description = "Charcoal PVC louver backdrop with LED profile back-lighting and floating console cabinet for setup box.",
+                material = "PVC Charcoal Panel + MDF",
+                dimensions = "8 ft W x 7 ft H",
+                unit = "Set",
+                sellingPrice = 18500.0,
+                costPrice = 12800.0,
+                stockQuantity = 10.0
+            )
+        )
+        for (p in initialProducts) {
+            saveProduct(p)
+        }
+
+        val initialWorkers = listOf(
+            Worker(name = "Kishore Bhai Mistri", phone = "+91 98790 12301", role = "Master Carpenter", dailyWage = 950.0),
+            Worker(name = "Prakash Bhai Patel", phone = "+91 98790 12302", role = "SS Railing Fabricator", dailyWage = 900.0),
+            Worker(name = "Dinesh Kumar", phone = "+91 98790 12303", role = "Glass & Aluminium Installer", dailyWage = 800.0),
+            Worker(name = "Mahesh Helper", phone = "+91 98790 12304", role = "Helper", dailyWage = 550.0)
+        )
+        for (w in initialWorkers) {
+            saveWorker(w)
+        }
+
+        val initialCustomers = listOf(
+            Customer(
+                name = "Dr. Jignesh Shah",
+                phone = "+91 94280 55441",
+                whatsapp = "+91 94280 55441",
+                address = "Bungalow No. 12, Malpur Road",
+                villageOrCity = "Modasa",
+                projectType = "SS Railing & Modular Kitchen",
+                budget = 180000.0,
+                status = "Estimate Sent",
+                notes = "Balcony glass railing 45 rft + L-shape kitchen required before Diwali."
+            ),
+            Customer(
+                name = "Bhavin Bhai Chaudhari",
+                phone = "+91 98981 77662",
+                whatsapp = "+91 98981 77662",
+                address = "Near Sardar Patel Hospital",
+                villageOrCity = "Dhansura",
+                projectType = "PVC Wardrobe & TV Unit",
+                budget = 125000.0,
+                status = "Site Visit",
+                notes = "Site visit done on Meghraj Road office. Measurements recorded."
+            )
+        )
+        for (c in initialCustomers) {
+            saveCustomer(c)
+        }
+
+        saveSettings(BusinessSettings(userId = uid))
     }
 }

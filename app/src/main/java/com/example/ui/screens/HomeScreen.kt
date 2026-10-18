@@ -21,6 +21,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AdminPanelSettings
 import androidx.compose.material.icons.filled.Assignment
 import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Calculate
@@ -75,7 +76,8 @@ fun HomeScreen(
     onNavigateToTools: () -> Unit,
     onNavigateToProducts: () -> Unit,
     onNavigateToCatalogue: () -> Unit,
-    onNavigateToAiTools: () -> Unit = {}
+    onNavigateToAiTools: () -> Unit = {},
+    onNavigateToAdmin: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val currentLang by viewModel.currentLanguage.collectAsState()
@@ -194,6 +196,14 @@ fun HomeScreen(
             LazyRow(
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
+                item {
+                    QuickActionButton(
+                        label = if (isHi) "🛡️ एडमिन पैनल" else "🛡️ Admin Panel",
+                        icon = Icons.Default.AdminPanelSettings,
+                        color = NavyPrimary,
+                        onClick = onNavigateToAdmin
+                    )
+                }
                 item {
                     QuickActionButton(
                         label = if (isHi) "+ नया कोटेशन" else "+ New Quote",

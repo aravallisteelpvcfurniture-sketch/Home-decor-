@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.AdminPanelSettings
 import androidx.compose.material.icons.filled.Business
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Phone
@@ -92,7 +93,8 @@ fun AravalliTopAppBar(
     subtitle: String = "मोडासा, गुजरात (Modasa, Gujarat)",
     currentLang: String,
     onToggleLang: () -> Unit,
-    onMenuClick: (() -> Unit)? = null
+    onMenuClick: (() -> Unit)? = null,
+    onAdminClick: (() -> Unit)? = null
 ) {
     CenterAlignedTopAppBar(
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
@@ -128,12 +130,28 @@ fun AravalliTopAppBar(
             }
         },
         actions = {
+            if (onAdminClick != null) {
+                IconButton(
+                    onClick = onAdminClick,
+                    modifier = Modifier
+                        .size(36.dp)
+                        .testTag("top_bar_admin_button")
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.AdminPanelSettings,
+                        contentDescription = "Admin Panel",
+                        tint = GoldAccent,
+                        modifier = Modifier.size(22.dp)
+                    )
+                }
+            }
+
             // Language selector button
             Surface(
                 modifier = Modifier
                     .clip(RoundedCornerShape(16.dp))
                     .clickable { onToggleLang() }
-                    .padding(horizontal = 8.dp, vertical = 4.dp),
+                    .padding(horizontal = 6.dp, vertical = 4.dp),
                 color = NavySecondary,
                 shape = RoundedCornerShape(16.dp)
             ) {
