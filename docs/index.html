@@ -214,6 +214,28 @@
       background: rgba(255, 255, 255, 0.15);
     }
 
+    .btn-download-secondary {
+      background: rgba(37, 99, 235, 0.25);
+      border: 1px solid rgba(59, 130, 246, 0.5);
+      color: #93C5FD;
+      padding: 0.9rem 1.6rem;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
+    }
+
+    .btn-download-secondary:hover {
+      background: rgba(37, 99, 235, 0.45);
+      border-color: #60A5FA;
+      color: white;
+      transform: translateY(-2px);
+    }
+
     .meta-info {
       display: flex;
       gap: 1.5rem;
@@ -478,7 +500,7 @@
           <span>Modasa, Gujarat</span>
         </div>
       </a>
-      <a href="./app-debug.apk" class="btn-download-nav">
+      <a href="./app-release.apk" class="btn-download-nav">
         ⬇ Download APK
       </a>
     </div>
@@ -497,25 +519,33 @@
 
         <div class="download-card">
           <div class="cta-group">
-            <a href="./app-debug.apk" class="btn-download-primary" id="downloadBtn">
+            <a href="./app-release.apk" class="btn-download-primary" id="downloadReleaseBtn">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                 <polyline points="7 10 12 15 17 10"></polyline>
                 <line x1="12" y1="15" x2="12" y2="3"></line>
               </svg>
-              Download Android APK
+              Download Release APK (20 MB)
+            </a>
+            <a href="./app-debug.apk" class="btn-download-secondary" id="downloadDebugBtn">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              Download Debug APK (28 MB)
             </a>
             <a href="https://github.com" class="btn-github" target="_blank" rel="noopener">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
               </svg>
-              View Repository
+              Repository
             </a>
           </div>
           <div class="meta-info">
             <div class="meta-item">📦 <strong>Version:</strong> 1.0 (v1)</div>
             <div class="meta-item">📱 <strong>OS:</strong> Android 7.0+ (Nougat to 16)</div>
-            <div class="meta-item">🔒 <strong>Signed:</strong> Debug / Container Verified</div>
+            <div class="meta-item">🔒 <strong>Signed:</strong> Release & Debug Available</div>
           </div>
         </div>
       </div>
